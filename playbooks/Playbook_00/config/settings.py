@@ -2,7 +2,7 @@ import logging
 import os
 from pathlib import Path
 
-DATA_DIR = Path(os.getenv("DATA_DIR", Path(__file__).resolve().parents[2] / "data"))
+DATA_DIR = Path(os.getenv("DATA_DIR") or Path(__file__).resolve().parents[3] / "data")
 INBOX = DATA_DIR / "inbox"
 PROCESSING = DATA_DIR / "processing"
 PROCESSED = DATA_DIR / "processed"

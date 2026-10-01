@@ -5,5 +5,5 @@ __pycache__/
 
 data/*/*
 !data/*/.gitkeep
-Playbook_*/logs/*
-!Playbook_*/logs/.gitkeep
+playbooks/*/logs/*
+!playbooks/*/logs/.gitkeep

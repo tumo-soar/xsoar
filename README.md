@@ -11,7 +11,17 @@ data/inbox/*.log -> Playbook_00 -> HTTP -> Playbook_01 -> OpenRouter
                data/results/<id>.md + .json
 ```
 
-More details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+## Layout
+
+```
+playbooks/
+  Playbook_00/   orchestrator: orchestrator/, workflow/, workers/, config/, logs/, tests/
+  Playbook_01/   AI worker:    input/, parser/, ai/, output/, config/, logs/, tests/
+contract/        data models shared by playbooks
+samples/         example logs
+data/            runtime files (not in git)
+docs/            course materials
+```
 
 ## data/
 
