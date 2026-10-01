@@ -1,0 +1,11 @@
+2026-09-30T23:58:12Z INFO  orders-api[2211]: health check ok
+2026-10-01T00:30:00Z INFO  orders-api[2211]: processed 41 orders in last 30m
+2026-10-01T02:14:03Z INFO  admin-panel: login success user=d.petrov from 10.20.4.17
+2026-10-01T02:14:41Z WARN  admin-panel: config change by user=d.petrov key=payments.verification.enabled old=true new=false
+2026-10-01T02:14:41Z INFO  admin-panel: change request ticket=none
+2026-10-01T02:15:10Z INFO  orders-api[2211]: config reloaded (payments.verification.enabled=false)
+2026-10-01T02:16:55Z INFO  orders-api[2211]: order 88412 accepted without payment verification amount=1450.00
+2026-10-01T02:18:20Z INFO  orders-api[2211]: order 88413 accepted without payment verification amount=2290.00
+2026-10-01T02:21:30Z ERROR payments-gw: reconciliation failed for order 88412: payment not found
+2026-10-01T02:21:31Z ERROR payments-gw: reconciliation failed for order 88413: payment not found
+2026-10-01T02:22:02Z WARN  admin-panel: config export requested by user=d.petrov api_key=sk_live_51Hx9aQ2demoKEY

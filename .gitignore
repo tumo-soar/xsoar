@@ -1,0 +1,9 @@
+.env
+__pycache__/
+.pytest_cache/
+.venv/
+
+data/*/*
+!data/*/.gitkeep
+Playbook_*/logs/*
+!Playbook_*/logs/.gitkeep

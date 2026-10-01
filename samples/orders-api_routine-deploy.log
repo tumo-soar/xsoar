@@ -1,0 +1,7 @@
+2026-10-01T10:00:00Z INFO  ci-cd: deployment started version=2.14.1 ticket=CHG-1042 approved_by=a.sargsyan
+2026-10-01T10:00:05Z INFO  ci-cd: maintenance window active 10:00-10:30 (CHG-1042)
+2026-10-01T10:01:12Z INFO  orders-api[3010]: starting version 2.14.1
+2026-10-01T10:01:20Z INFO  admin-panel: config change by user=ci-bot key=orders.page_size old=20 new=25 ticket=CHG-1042
+2026-10-01T10:01:25Z INFO  orders-api[3010]: config reloaded
+2026-10-01T10:02:00Z INFO  orders-api[3010]: health check ok
+2026-10-01T10:05:00Z INFO  ci-cd: deployment finished version=2.14.1 status=success
