@@ -1,93 +1,124 @@
-# X SOAR: Playbook_00 + Playbook_01
+# X SOAR
 
-Put a `.log` file into `data/inbox/`. Playbook_00 (orchestrator) picks it up and sends it to
-Playbook_01 (AI Alert Validation). The worker masks secrets, asks an OpenRouter model for a summary
-and checks that every fact cited by the model exists in the log. The report is written to `data/results/`.
-
-```
-data/inbox/*.log -> Playbook_00 -> HTTP -> Playbook_01 -> OpenRouter
-                         |
-                         v
-               data/results/<id>.md + .json
-```
-
-## Layout
-
-```
-playbooks/
-  Playbook_00/   orchestrator: orchestrator/, workflow/, workers/, config/, logs/, tests/
-  Playbook_01/   AI worker:    input/, parser/, ai/, output/, config/, logs/, tests/
-contract/        data models shared by playbooks
-samples/         example logs
-data/            runtime files (not in git)
-docs/            course materials
-```
-
-## data/
-
-| Folder | Purpose |
-|---|---|
-| `inbox/` | Input. Put `.log` files here, checked every 3 seconds |
-| `processing/` | File currently being processed |
-| `processed/` | Processed logs, prefixed with a timestamp |
-| `failed/` | Empty or broken files |
-| `results/` | Output: `<id>.md` report and `<id>.json` |
-
-The system name comes from the file name before the first `_`
-(`orders-api_config-change.log` -> `orders-api`).
-
-## Setup
-
-```bash
-cp .env.example .env
-# set AI_API_KEY and AI_MODEL, e.g. google/gemma-4-31b-it:free
-```
-
-Without a key the AI is disabled and every alert gets `MANUAL_CHECK_REQUIRED`.
+Log → alert → AI analysis → report with references to log lines. Architecture: [docs/architecture.md](docs/architecture.md).
 
 ## Run
 
-```bash
-docker compose up -d --build   # start in background
-docker compose logs -f         # follow logs
-docker compose ps              # status
-docker compose down            # stop
+```sh
+cp .env.example .env
+docker compose -f docker-compose-dev.yml up -d --build
 ```
 
-After editing `.env`: `docker compose up -d --force-recreate`
+OpenRouter key: `OPENROUTER_API_KEY` in `.env`, model: `OPENROUTER_MODEL`. Without a key, an alert ends in `MANUAL_CHECK_REQUIRED`.
 
-## Test
+| What                             | Address                                                 |
+| -------------------------------- | ------------------------------------------------------- |
+| UI                               | http://localhost:5173                                   |
+| api                              | http://localhost:3000/api/alerts                        |
+| collector                        | http://localhost:8000/alerts (POST)                     |
+| RabbitMQ UI                      | http://localhost:15672 (login and password from `.env`) |
+| RabbitScout (modern RabbitMQ UI) | http://localhost:3030                                   |
+| Postgres                         | localhost:5433                                          |
 
-```bash
-cp samples/orders-api_config-change.log data/inbox/   # one file
-cp samples/*.log data/inbox/                          # all samples
+## Commands
 
-# worker down -> MANUAL_CHECK_REQUIRED
-docker compose stop playbook_01
-cp samples/orders-api_missing-info.log data/inbox/
-docker compose start playbook_01
+```sh
+# development mode: restart on code changes
+docker compose -f docker-compose-dev.yml up --build --watch
+
+# stop
+docker compose -f docker-compose-dev.yml down
+
+# stop and delete data (Postgres, RabbitMQ)
+docker compose -f docker-compose-dev.yml down -v
+
+# apply a new migration
+docker compose -f docker-compose-dev.yml run --rm orchestrator-migrate
 ```
 
-PowerShell: `Copy-Item samples\*.log data\inbox\`
+## Example
 
-Worker API: http://localhost:8001/docs
-
-Unit tests (no network or key needed):
-
-```bash
-docker compose run --rm playbook_01 pytest
-docker compose run --rm playbook_00 pytest
+```sh
+python -c "import json; print(json.dumps({'text': open('samples/auth-server_ssh-bruteforce.log').read(), 'labels': {'env': 'dev'}}))" \
+  | curl -X POST localhost:8000/alerts -H 'content-type: application/json' --data @-
 ```
 
-## Samples
+More logs are in `samples/`. For `multi-host_contractor-exfiltration.log`, the expected answer is in the `.expected.md` file next to it.
 
-| File | Scenario |
-|---|---|
-| `orders-api_config-change.log` | Payment verification disabled at night without a ticket |
-| `orders-api_routine-deploy.log` | Planned deploy with an approved ticket |
-| `orders-api_missing-info.log` | Config change with no author and no ticket |
-| `auth-server_ssh-bruteforce.log` | SSH brute force followed by a successful login |
-| `orders-api_prompt-injection.log` | Log line tries to make the AI answer "benign" |
+## Contracts
 
-Free OpenRouter models are rate-limited. On `429 Too Many Requests` wait or switch `AI_MODEL`
-to another `:free` model.
+After changing `contracts/` (only Docker is needed):
+
+```sh
+docker run --rm -v "$PWD:/repo" -w /repo python:3.12-slim sh scripts/gen-py.sh
+docker run --rm -v "$PWD:/repo" -w /repo node:22-alpine sh scripts/gen-ts.sh
+```
+
+Code in `packages/contracts-py` and `packages/contracts-ts` is generated; do not edit it by hand.
+
+## Structure
+
+Everything that runs as a container lives in `services/`, shared libraries in `packages/`. Items marked `(planned)` do not exist yet. Details: [ADR-002](docs/adr/ADR-002-repository-structure.md).
+
+```
+XSOAR/
+├── CLAUDE.md                     # where to start: docs to read, key decisions
+├── README.md
+├── docker-compose-dev.yml        # dev environment: postgres, rabbitmq, all services
+├── .env.example
+├── pyproject.toml                # uv workspace root
+├── uv.lock                       # one lock for all Python services
+│
+├── docs/
+│   ├── architecture.md           # how it works + reference
+│   ├── adr/                      # architecture decisions, ADR-001…ADR-005
+│   ├── tasks/                    # task descriptions
+│   └── LearningMaterials/
+│
+├── contracts/                    # JSON Schema, single source of truth for messages
+│   ├── envelope.schema.json
+│   ├── messages/                 # alert.created, task.playbook, task.result
+│   └── playbooks/                # input/output of each playbook: p01_ai_validation.*.schema.json
+│
+├── services/
+│   ├── frontend/                 # React + Vite (refine, shadcn)
+│   ├── api/                      # NestJS, reads alerts from the orchestrator.api_alerts view
+│   │   ├── prisma/schema.prisma
+│   │   └── src/alerts/
+│   ├── collector/                # FastAPI: accepts logs, writes collector.alerts, sends alert.created
+│   │   ├── migrations/           # schema collector
+│   │   └── src/xsoar_collector/
+│   │       ├── app.py
+│   │       └── sources/          # (planned) wazuh.py, files.py
+│   ├── orchestrator/             # alert lifecycle and routing between playbooks
+│   │   ├── migrations/           # schema orchestrator
+│   │   └── src/xsoar_orchestrator/
+│   │       ├── routing.py        # next_step: which playbook or final status comes next
+│   │       ├── runs.py           # runs and tasks, passing data between playbooks
+│   │       ├── transitions.py    # alert status transitions
+│   │       ├── sweeper.py        # overdue tasks → MANUAL_CHECK_REQUIRED
+│   │       ├── handlers/         # alerts.py, results.py
+│   │       └── grouping.py       # (planned) grouping alerts into incidents
+│   ├── worker-ai/                # LLM playbooks
+│   │   └── src/xsoar_worker_ai/
+│   │       ├── llm.py
+│   │       └── playbooks/p01_ai_validation/   # playbook.py, grounding.py, prompt.txt
+│   ├── worker/                   # (planned) lightweight playbooks, e.g. p02_change_approval; only a Dockerfile so far
+│
+├── packages/
+│   ├── xsoar-common/             # Python infrastructure: db, mq, outbox, inbox, logging, worker runtime + @playbook
+│   ├── contracts-py/             # generated from contracts/ (pydantic), do not edit
+│   └── contracts-ts/             # generated from contracts/ (TS types), do not edit
+│
+├── infra/postgres/init/          # roles, schemas and grants on first start
+├── scripts/                      # gen-py.sh, gen-ts.sh: code generation from contracts/
+├── samples/                      # test logs; *.expected.md is the expected answer
+```
+
+Not done yet (planned): tests (`services/*/tests/`), `Makefile` (`make gen`, `make lint`, `make test`), CI (`.github/workflows/ci.yml`), pre-commit.
+
+## Architecture
+
+![Architecture diagram](docs/schema.png)
+
+How it works, message flow, retries, statuses and storage: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/).

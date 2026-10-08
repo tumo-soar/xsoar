@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TaskPlaybook",
+  "type": "object",
+  "required": ["task_id", "run_id", "alert_id", "playbook", "input"],
+  "properties": {
+    "task_id": {"type": "string", "format": "uuid"},
+    "run_id": {"type": "string", "format": "uuid"},
+    "alert_id": {"type": "string", "format": "uuid"},
+    "playbook": {"type": "string"},
+    "input": {"type": "object"}
+  }
+}

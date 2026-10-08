@@ -1,0 +1,219 @@
+name: xsoar
+
+x-python-service: &python-service
+  restart: unless-stopped
+  depends_on:
+    rabbitmq:
+      condition: service_healthy
+
+services:
+  rabbitmq:
+    image: rabbitmq:4.3-management-alpine
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?set in .env}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set in .env}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:?set in .env}
+    ports:
+      - "5672:5672" # AMQP
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 20s
+
+  rabbitscout:
+    image: ghcr.io/ralve-org/rabbitscout:latest
+    ports:
+      - "3030:3000"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "15672"
+      RABBITMQ_PROTOCOL: http
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set in .env}
+      API_DB_PASSWORD: ${API_DB_PASSWORD:?set in .env}
+      COLLECTOR_DB_PASSWORD: ${COLLECTOR_DB_PASSWORD:?set in .env}
+      ORCHESTRATOR_DB_PASSWORD: ${ORCHESTRATOR_DB_PASSWORD:?set in .env}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  collector-migrate:
+    build:
+      context: .
+      dockerfile: services/collector/Dockerfile.dev
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://svc_collector:${COLLECTOR_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  orchestrator-migrate:
+    build:
+      context: .
+      dockerfile: services/orchestrator/Dockerfile.dev
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://svc_orchestrator:${ORCHESTRATOR_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  collector:
+    <<: *python-service
+    build:
+      context: .
+      dockerfile: services/collector/Dockerfile.dev
+    environment:
+      DATABASE_URL: postgresql+asyncpg://svc_collector:${COLLECTOR_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/${RABBITMQ_VHOST}
+      CORS_ORIGINS: ${CORS_ORIGINS:?set in .env}
+    ports:
+      - "8000:8000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      collector-migrate:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./services/collector/src
+          target: /app/services/collector/src
+        - action: sync+restart
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/collector/pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
+
+  orchestrator:
+    <<: *python-service
+    build:
+      context: .
+      dockerfile: services/orchestrator/Dockerfile.dev
+    environment:
+      DATABASE_URL: postgresql+asyncpg://svc_orchestrator:${ORCHESTRATOR_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/${RABBITMQ_VHOST}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      orchestrator-migrate:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./services/orchestrator/src
+          target: /app/services/orchestrator/src
+        - action: sync+restart
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/orchestrator/pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
+
+  worker-ai:
+    <<: *python-service
+    build:
+      context: .
+      dockerfile: services/worker-ai/Dockerfile.dev
+    environment:
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/${RABBITMQ_VHOST}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openrouter}
+      LLM_TIMEOUT_S: ${LLM_TIMEOUT_S:-30}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./services/worker-ai/src
+          target: /app/services/worker-ai/src
+        - action: sync+restart
+          path: ./packages
+          target: /app/packages
+        - action: rebuild
+          path: ./services/worker-ai/pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
+
+  api:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile.dev
+    environment:
+      DATABASE_URL: postgresql://svc_api:${API_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      CORS_ORIGINS: ${CORS_ORIGINS:?set in .env}
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      orchestrator-migrate:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - action: sync
+          path: ./services/api/src
+          target: /app/src
+          ignore:
+            - generated/
+        - action: rebuild
+          path: ./services/api/prisma/schema.prisma
+        - action: rebuild
+          path: ./services/api/package.json
+        - action: rebuild
+          path: ./services/api/pnpm-lock.yaml
+
+  web:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      VITE_API_URL: ${VITE_API_URL:?set in .env}
+      VITE_COLLECTOR_URL: ${VITE_COLLECTOR_URL:?set in .env}
+    ports:
+      - "5173:5173"
+    develop:
+      watch:
+        - action: sync
+          path: ./services/frontend/src
+          target: /app/src
+        - action: sync
+          path: ./services/frontend/public
+          target: /app/public
+        - action: sync+restart
+          path: ./services/frontend/vite.config.ts
+          target: /app/vite.config.ts
+        - action: rebuild
+          path: ./services/frontend/package.json
+        - action: rebuild
+          path: ./services/frontend/pnpm-lock.yaml
+
+volumes:
+  rabbitmq-data:
+  postgres-data:

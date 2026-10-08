@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TaskResult",
+  "type": "object",
+  "required": ["task_id", "run_id", "playbook", "status"],
+  "properties": {
+    "task_id": {"type": "string", "format": "uuid"},
+    "run_id": {"type": "string", "format": "uuid"},
+    "playbook": {"type": "string"},
+    "status": {"type": "string", "enum": ["ok", "failed"]},
+    "output": {"type": ["object", "null"]},
+    "error": {"type": ["string", "null"]}
+  }
+}

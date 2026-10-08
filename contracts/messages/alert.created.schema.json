@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AlertCreated",
+  "type": "object",
+  "required": ["alert_id", "number", "source", "labels", "received_at", "text"],
+  "properties": {
+    "alert_id": {"type": "string", "format": "uuid"},
+    "number": {"type": "integer"},
+    "source": {"type": "string"},
+    "labels": {"type": "object", "additionalProperties": {"type": "string"}},
+    "filename": {"type": ["string", "null"]},
+    "received_at": {"type": "string", "format": "date-time"},
+    "text": {"type": "string"}
+  }
+}

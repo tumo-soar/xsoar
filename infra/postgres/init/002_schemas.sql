@@ -1,0 +1,3 @@
+CREATE SCHEMA IF NOT EXISTS api          AUTHORIZATION svc_api;
+CREATE SCHEMA IF NOT EXISTS collector    AUTHORIZATION svc_collector;
+CREATE SCHEMA IF NOT EXISTS orchestrator AUTHORIZATION svc_orchestrator;

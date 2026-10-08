@@ -1,0 +1,68 @@
+Oct  6 00:00:01 app-01 CRON[1201]: (root) CMD (/usr/lib/sysstat/sa1 1 1)
+Oct  6 00:10:01 app-01 CRON[1233]: (root) CMD (/usr/lib/sysstat/sa1 1 1)
+Oct  6 01:00:02 db-01 postgres[812]: LOG:  checkpoint complete: wrote 1840 buffers (11.2%); write=179.9 s, sync=0.012 s
+Oct  6 02:00:01 db-01 sshd[21880]: Accepted publickey for svc-backup from 10.0.4.12 port 50122 ssh2: ED25519 SHA256:Wm1fQ0xvZ2tleUJhY2t1cA
+Oct  6 02:00:01 db-01 sshd[21880]: pam_unix(sshd:session): session opened for user svc-backup(uid=1003) by (uid=0)
+Oct  6 02:00:02 db-01 sudo: svc-backup : TTY=unknown ; PWD=/home/svc-backup ; USER=postgres ; COMMAND=/usr/bin/pg_dump -Fc orders
+Oct  6 02:14:37 db-01 sshd[21880]: pam_unix(sshd:session): session closed for user svc-backup
+Oct  6 02:14:39 backup-01 backup[3321]: nightly dump orders.dump size=4.1G checksum=ok retention=14d
+Oct  6 03:00:00 app-01 logrotate[4410]: rotating pattern: /var/log/nginx/*.log  after 1 days (14 rotations)
+Oct  6 03:00:00 db-01 logrotate[2215]: rotating pattern: /var/log/postgresql/*.log  weekly (8 rotations)
+Oct  6 04:12:00 db-01 postgres[812]: LOG:  automatic vacuum of table "orders.public.order_items": index scans: 1
+Oct  6 06:12:44 app-01 nginx: 198.51.100.23 - - [06/Oct/2026:06:12:44 +0000] "GET /wp-login.php HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+Oct  6 06:12:45 app-01 nginx: 198.51.100.23 - - [06/Oct/2026:06:12:45 +0000] "GET /.env HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+Oct  6 06:12:45 app-01 nginx: 198.51.100.23 - - [06/Oct/2026:06:12:45 +0000] "GET /phpmyadmin/ HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+Oct  6 06:12:46 app-01 nginx: 198.51.100.23 - - [06/Oct/2026:06:12:46 +0000] "GET /.git/config HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+Oct  6 07:10:22 proxy-01 squid[882]: 10.0.3.15 TCP_TUNNEL/200 48211 CONNECT apt.postgresql.org:443 - HIER_DIRECT/192.0.2.10 -
+Oct  6 07:10:24 db-01 apt[2302]: Packages up to date (0 upgrades)
+Oct  6 08:41:15 vpn-01 openvpn[1201]: m.ivanova/203.0.113.81:40122 MULTI: Learn: 10.0.2.41 -> m.ivanova/203.0.113.81:40122
+Oct  6 08:55:10 app-01 sshd[5120]: Failed password for m.ivanova from 10.0.2.41 port 53312 ssh2
+Oct  6 08:55:18 app-01 sshd[5120]: Accepted password for m.ivanova from 10.0.2.41 port 53312 ssh2
+Oct  6 08:55:18 app-01 sshd[5120]: pam_unix(sshd:session): session opened for user m.ivanova(uid=1011) by (uid=0)
+Oct  6 09:02:11 app-01 orders-api[3010]: GET /api/orders?page=1 200 34ms user=m.ivanova
+Oct  6 09:02:40 app-01 orders-api[3010]: GET /api/orders/88412 200 12ms user=m.ivanova
+Oct  6 09:14:03 vpn-01 openvpn[1201]: d.karapetyan/203.0.113.90:51877 MULTI: Learn: 10.0.2.52 -> d.karapetyan/203.0.113.90:51877
+Oct  6 09:20:17 app-01 orders-api[3010]: GET /api/reports/daily?date=2026-10-05 200 210ms user=d.karapetyan
+Oct  6 09:30:00 app-01 ci-cd: deployment started version=2.14.2 ticket=CHG-1057 approved_by=a.sargsyan
+Oct  6 09:30:02 app-01 ci-cd: maintenance window active 09:30-10:00 (CHG-1057)
+Oct  6 09:30:41 app-01 orders-api[3010]: received SIGTERM, shutting down
+Oct  6 09:30:44 app-01 orders-api[3388]: starting version 2.14.2
+Oct  6 09:31:02 app-01 orders-api[3388]: health check ok
+Oct  6 09:31:05 app-01 ci-cd: deployment finished version=2.14.2 status=success
+Oct  6 09:45:12 app-01 nginx: 10.0.1.5 - - [06/Oct/2026:09:45:12 +0000] "GET /api/health HTTP/1.1" 200 15 "-" "lb-healthcheck/1.0"
+Oct  6 10:05:33 app-01 admin-panel: user list viewed by=a.sargsyan filter=team:data
+Oct  6 10:05:41 app-01 admin-panel: user profile viewed id=t.hakobyan role=contractor team=data contract_end=2026-09-30 by=a.sargsyan
+Oct  6 10:22:09 app-01 orders-api[3388]: POST /api/orders 201 48ms user=m.ivanova
+Oct  6 10:40:00 app-01 orders-api[3388]: WARN slow query 1210ms GET /api/reports/monthly user=d.karapetyan
+Oct  6 11:02:31 app-01 nginx: 198.51.100.61 - - [06/Oct/2026:11:02:31 +0000] "POST /api/login HTTP/1.1" 401 52 "-" "python-requests/2.31"
+Oct  6 11:02:33 app-01 nginx: 198.51.100.61 - - [06/Oct/2026:11:02:33 +0000] "POST /api/login HTTP/1.1" 401 52 "-" "python-requests/2.31"
+Oct  6 11:02:35 app-01 nginx: 198.51.100.61 - - [06/Oct/2026:11:02:35 +0000] "POST /api/login HTTP/1.1" 401 52 "-" "python-requests/2.31"
+Oct  6 11:02:37 app-01 nginx: 198.51.100.61 - - [06/Oct/2026:11:02:37 +0000] "POST /api/login HTTP/1.1" 429 31 "-" "python-requests/2.31"
+Oct  6 11:30:00 app-01 orders-api[3388]: GET /api/orders?page=3 200 41ms user=m.ivanova
+Oct  6 12:00:01 db-01 postgres[812]: LOG:  checkpoint complete: wrote 2210 buffers (13.5%); write=180.1 s, sync=0.010 s
+Oct  6 12:15:44 app-01 sshd[7781]: Accepted publickey for deploy from 10.0.5.20 port 44120 ssh2: ED25519 SHA256:ZGVwbG95a2V5Q0lDRA
+Oct  6 12:15:45 app-01 sudo: deploy : TTY=unknown ; PWD=/srv/orders ; USER=root ; COMMAND=/bin/systemctl reload nginx
+Oct  6 12:15:46 app-01 sshd[7781]: pam_unix(sshd:session): session closed for user deploy
+Oct  6 12:58:03 vpn-01 openvpn[1201]: t.hakobyan/198.51.100.200:51022 MULTI: Learn: 10.0.2.77 -> t.hakobyan/198.51.100.200:51022
+Oct  6 13:05:19 app-01 orders-api[3388]: GET /api/orders?page=1 200 30ms user=d.karapetyan
+Oct  6 13:20:00 app-01 nginx: 10.0.1.5 - - [06/Oct/2026:13:20:00 +0000] "GET /api/health HTTP/1.1" 200 15 "-" "lb-healthcheck/1.0"
+Oct  6 13:41:55 db-01 sshd[30211]: Accepted publickey for svc-backup from 10.0.2.77 port 61544 ssh2: ED25519 SHA256:Wm1fQ0xvZ2tleUJhY2t1cA
+Oct  6 13:41:55 db-01 sshd[30211]: pam_unix(sshd:session): session opened for user svc-backup(uid=1003) by (uid=0)
+Oct  6 13:42:20 db-01 sudo: svc-backup : TTY=pts/3 ; PWD=/home/svc-backup ; USER=postgres ; COMMAND=/usr/bin/pg_dump -Fc orders -t customers -t payment_methods -f /tmp/.cache/c.dump
+Oct  6 13:44:02 app-01 orders-api[3388]: GET /api/orders/88577 200 11ms user=m.ivanova
+Oct  6 13:46:30 proxy-01 squid[882]: 10.0.3.15 TCP_TUNNEL/200 412887213 CONNECT storage-sync.cloudapp-cdn.net:443 - HIER_DIRECT/203.0.113.44 -
+Oct  6 13:47:12 db-01 CRON[30420]: (svc-backup) REPLACE (svc-backup)
+Oct  6 13:47:40 db-01 sshd[30211]: pam_unix(sshd:session): session closed for user svc-backup
+Oct  6 13:52:10 app-01 orders-api[3388]: POST /api/orders 201 52ms user=m.ivanova
+Oct  6 14:00:01 app-01 CRON[8120]: (root) CMD (/usr/lib/sysstat/sa1 1 1)
+Oct  6 14:15:01 db-01 CRON[30777]: (svc-backup) CMD (/home/svc-backup/.local/bin/sync-check >/dev/null 2>&1)
+Oct  6 14:15:03 proxy-01 squid[882]: 10.0.3.15 TCP_TUNNEL/200 3841 CONNECT storage-sync.cloudapp-cdn.net:443 - HIER_DIRECT/203.0.113.44 -
+Oct  6 14:20:00 app-01 nginx: 10.0.1.5 - - [06/Oct/2026:14:20:00 +0000] "GET /api/health HTTP/1.1" 200 15 "-" "lb-healthcheck/1.0"
+Oct  6 14:31:47 app-01 orders-api[3388]: GET /api/reports/daily?date=2026-10-06 200 198ms user=d.karapetyan
+Oct  6 14:45:01 db-01 CRON[31102]: (svc-backup) CMD (/home/svc-backup/.local/bin/sync-check >/dev/null 2>&1)
+Oct  6 14:45:02 proxy-01 squid[882]: 10.0.3.15 TCP_TUNNEL/200 3902 CONNECT storage-sync.cloudapp-cdn.net:443 - HIER_DIRECT/203.0.113.44 -
+Oct  6 15:02:13 vpn-01 openvpn[1201]: t.hakobyan/198.51.100.200:51022 SIGTERM[soft,remote-exit] received, client-instance exiting
+Oct  6 15:10:00 app-01 orders-api[3388]: GET /api/orders?page=2 200 29ms user=m.ivanova
+Oct  6 15:15:01 db-01 CRON[31455]: (svc-backup) CMD (/home/svc-backup/.local/bin/sync-check >/dev/null 2>&1)
+Oct  6 15:15:02 proxy-01 squid[882]: 10.0.3.15 TCP_TUNNEL/200 3877 CONNECT storage-sync.cloudapp-cdn.net:443 - HIER_DIRECT/203.0.113.44 -
+Oct  6 15:30:00 app-01 orders-api[3388]: health check ok

@@ -1,0 +1,8 @@
+[tool.uv.workspace]
+members = [
+    "packages/xsoar-common",
+    "packages/contracts-py",
+    "services/collector",
+    "services/orchestrator",
+    "services/worker-ai",
+]

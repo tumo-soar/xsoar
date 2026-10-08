@@ -1,0 +1,20 @@
+[project]
+name = "xsoar-orchestrator"
+version = "0.1.0"
+description = "X SOAR orchestrator: alerts, runs and routing between playbooks."
+requires-python = ">=3.12"
+dependencies = [
+    "xsoar-common",
+    "xsoar-contracts",
+    "alembic>=1.13,<2",
+    "pydantic>=2.7,<3",
+    "pydantic-settings>=2.3,<3",
+]
+
+[tool.uv.sources]
+xsoar-common = { workspace = true }
+xsoar-contracts = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

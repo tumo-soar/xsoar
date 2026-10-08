@@ -1,0 +1,17 @@
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+ENV UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=0 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+COPY packages packages
+COPY services/collector services/collector
+# Editable install: the venv points at src/, so files synced by compose watch take effect on restart.
+RUN uv sync --frozen --no-dev --package xsoar-collector
+
+ENV PATH="/app/.venv/bin:$PATH"
+WORKDIR /app/services/collector
+CMD ["python", "-m", "xsoar_collector"]

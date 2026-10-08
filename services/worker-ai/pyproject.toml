@@ -1,0 +1,20 @@
+[project]
+name = "xsoar-worker-ai"
+version = "0.1.0"
+description = "X SOAR worker for AI playbooks."
+requires-python = ">=3.12"
+dependencies = [
+    "xsoar-common",
+    "xsoar-contracts",
+    "httpx>=0.27,<1",
+    "pydantic>=2.7,<3",
+    "pydantic-settings>=2.3,<3",
+]
+
+[tool.uv.sources]
+xsoar-common = { workspace = true }
+xsoar-contracts = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

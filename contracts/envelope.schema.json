@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["v", "message_id", "type", "occurred_at", "correlation", "payload"],
+  "properties": {
+    "v": {"type": "integer", "const": 1},
+    "message_id": {"type": "string", "format": "uuid"},
+    "type": {"type": "string"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alert_id"],
+      "properties": {
+        "alert_id": {"type": "string", "format": "uuid"},
+        "run_id": {"type": ["string", "null"], "format": "uuid"},
+        "task_id": {"type": ["string", "null"], "format": "uuid"}
+      }
+    },
+    "payload": {"type": "object"}
+  }
+}
