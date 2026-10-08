@@ -121,4 +121,4 @@ Not done yet (planned): tests (`services/*/tests/`), `Makefile` (`make gen`, `ma
 
 ![Architecture diagram](docs/schema.png)
 
-How it works, message flow, retries, statuses and storage: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/).
+How it works, message flow, retries, statuses and storage: [docs/architecture.md](docs/architecture.md). 
