@@ -6,7 +6,7 @@ Log → alert → AI analysis → report with references to log lines. Architect
 
 ```sh
 cp .env.example .env
-docker compose -f docker-compose-dev.yml up -d --build
+docker compose -f docker-compose-dev.yml up --build
 ```
 
 OpenRouter key: `OPENROUTER_API_KEY` in `.env`, model: `OPENROUTER_MODEL`. Without a key, an alert ends in `MANUAL_CHECK_REQUIRED`.
