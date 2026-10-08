@@ -58,7 +58,7 @@ Code in `packages/contracts-py` and `packages/contracts-ts` is generated; do not
 
 ## Structure
 
-Everything that runs as a container lives in `services/`, shared libraries in `packages/`. Items marked `(planned)` do not exist yet. Details: [ADR-002](docs/adr/ADR-002-repository-structure.md).
+Everything that runs as a container lives in `services/`, shared libraries in `packages/`. Items marked `(planned)` do not exist yet. 
 
 ```
 XSOAR/
