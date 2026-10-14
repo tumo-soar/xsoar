@@ -1,18 +1,36 @@
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { isInProgress } from "./alert";
 
-const COLORS: Record<string, string> = {
-  RECEIVED: "bg-slate-500/15 text-slate-700 dark:text-slate-300",
-  ANALYZING: "bg-blue-500/15 text-blue-700 dark:text-blue-300",
-  ANALYZED: "bg-green-500/15 text-green-700 dark:text-green-300",
-  MANUAL_CHECK_REQUIRED: "bg-amber-500/20 text-amber-800 dark:text-amber-300",
-  DISMISSED: "bg-slate-500/15 text-slate-700 dark:text-slate-300",
-  ESCALATED: "bg-red-500/15 text-red-700 dark:text-red-300",
-  SUPPRESSED: "bg-slate-500/15 text-slate-700 dark:text-slate-300",
+const STYLES: Record<string, { label: string; className: string }> = {
+  RECEIVED: { label: "Received", className: "bg-sev-info/12 text-sev-info" },
+  ANALYZING: { label: "Analyzing", className: "bg-sev-low/12 text-sev-low" },
+  ANALYZED: { label: "Analyzed", className: "bg-success/12 text-success" },
+  MANUAL_CHECK_REQUIRED: {
+    label: "Needs manual check",
+    className: "bg-sev-medium/14 text-sev-medium",
+  },
+  DISMISSED: { label: "Dismissed", className: "bg-sev-info/12 text-sev-info" },
+  ESCALATED: { label: "Escalated", className: "bg-sev-critical/12 text-sev-critical" },
+  SUPPRESSED: { label: "Suppressed", className: "bg-sev-info/12 text-sev-info" },
 };
 
-export const StatusBadge = ({ status }: { status: string }) => (
-  <Badge variant="outline" className={cn("border-transparent", COLORS[status])}>
-    {status.replaceAll("_", " ")}
-  </Badge>
-);
+export const statusLabel = (status: string) =>
+  STYLES[status]?.label ?? status.replaceAll("_", " ").toLowerCase();
+
+export const StatusBadge = ({ status, className }: { status: string; className?: string }) => {
+  const style = STYLES[status];
+  return (
+    <span
+      className={cn(
+        "inline-flex h-5 items-center gap-1.5 rounded-md px-1.5 text-xs font-medium whitespace-nowrap",
+        style?.className ?? "bg-muted text-muted-foreground",
+        className,
+      )}
+    >
+      {isInProgress(status) && (
+        <span aria-hidden className="live-dot size-1.5 rounded-full bg-current" />
+      )}
+      {statusLabel(status)}
+    </span>
+  );
+};

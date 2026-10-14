@@ -1,6 +1,6 @@
 # X SOAR
 
-Log → alert → AI analysis → report with references to log lines. Architecture: [docs/architecture.md](docs/architecture.md).
+Log → alert → AI analysis → report with references to log lines. Architecture: [docs/architecture.md](docs/architecture.md). UI: [docs/ui.md](docs/ui.md).
 
 ## Run
 
@@ -71,6 +71,7 @@ XSOAR/
 │
 ├── docs/
 │   ├── architecture.md           # how it works + reference
+│   ├── ui.md                     # SOAR console: screens, live vs preview, design system
 │   ├── adr/                      # architecture decisions, ADR-001…ADR-005
 │   ├── tasks/                    # task descriptions
 │   └── LearningMaterials/
@@ -81,7 +82,7 @@ XSOAR/
 │   └── playbooks/                # input/output of each playbook: p01_ai_validation.*.schema.json
 │
 ├── services/
-│   ├── frontend/                 # React + Vite (refine, shadcn)
+│   ├── frontend/                 # React + Vite (refine, shadcn), SOAR console, see docs/ui.md
 │   ├── api/                      # NestJS, reads alerts from the orchestrator.api_alerts view
 │   │   ├── prisma/schema.prisma
 │   │   └── src/alerts/

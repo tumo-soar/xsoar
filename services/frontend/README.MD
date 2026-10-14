@@ -1,48 +1,23 @@
-# xsoar-front
+# X SOAR frontend
 
-<div align="center" style="margin: 30px;">
-    <a href="https://refine.dev">
-    <img alt="refine logo" src="https://refine.ams3.cdn.digitaloceanspaces.com/readme/refine-readme-banner.png">
-    </a>
-</div>
-<br/>
+The SOAR console: alert queue, AI analysis, incidents, approvals, playbooks, indicators and integrations. React 19, Vite, [Refine](https://refine.dev), shadcn/ui and Tailwind v4.
 
-This [Refine](https://github.com/refinedev/refine) project was generated with [create refine-app](https://github.com/refinedev/refine/tree/master/packages/create-refine-app).
+Screens, what is live and what is preview, the design system and how to connect a preview screen to the api: [docs/ui.md](../../docs/ui.md).
 
-## Getting Started
+## Run
 
-A React Framework for building internal tools, admin panels, dashboards & B2B apps with unmatched flexibility ✨
-
-Refine's hooks and components simplifies the development process and eliminates the repetitive tasks by providing industry-standard solutions for crucial aspects of a project, including authentication, access control, routing, networking, state management, and i18n.
-
-## Available Scripts
-
-### Running the development server.
-
-```bash
-    pnpm dev
+```sh
+pnpm install
+VITE_API_URL=http://localhost:3000/api VITE_COLLECTOR_URL=http://localhost:8000 pnpm dev
 ```
 
-### Building for production.
+Or start the whole stack from the repository root with `docker compose -f docker-compose-dev.yml up --build`.
 
-```bash
-    pnpm build
+## Commands
+
+```sh
+pnpm dev                  # development server on :5173
+pnpm build                # production build
+npx tsc --noEmit -p .     # type check
+npx eslint src            # lint
 ```
-
-### Running the production server.
-
-```bash
-    pnpm start
-```
-
-## Learn More
-
-To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)
-
-- **REST Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-- **shadcn/ui** [Docs](https://refine.dev/docs/guides-concepts/general-concepts/#headless-concept)
-- **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
-
-## License
-
-MIT
