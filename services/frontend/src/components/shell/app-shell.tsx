@@ -1,10 +1,14 @@
-import type { PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren } from "react";
+import { useLocation } from "react-router";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
 import { Topbar } from "./topbar";
 
 export function AppShell({ children }: PropsWithChildren) {
+  const { pathname } = useLocation();
+  useEffect(() => window.scrollTo(0, 0), [pathname]);
+
   return (
     <SidebarProvider>
       <AppSidebar />

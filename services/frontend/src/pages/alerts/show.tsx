@@ -56,6 +56,9 @@ export const AlertShow = () => {
     queryOptions: {
       refetchInterval: (q) =>
         !q.state.data || isInProgress(q.state.data.data.status) ? REFRESH_MS : false,
+      // Right after upload the orchestrator may not have created the alert yet.
+      retry: (failureCount, error) => error?.statusCode === 404 && failureCount < 15,
+      retryDelay: 1000,
     },
   });
 

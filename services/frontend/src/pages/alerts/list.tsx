@@ -257,19 +257,21 @@ const SeverityCounts = () => {
   for (const alert of result.data) counts[alertSeverity(alert)]++;
 
   return (
-    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-5">
-      {SEVERITIES.map((severity) => (
-        <div
-          key={severity}
-          className="flex items-center justify-between gap-2 bg-card px-4 py-3 last:col-span-2 sm:last:col-span-1"
-        >
-          <span className="flex items-center gap-2 text-sm text-muted-foreground">
-            <SeverityDot severity={severity} />
-            {severityLabel(severity)}
-          </span>
-          <span className="text-lg font-semibold tabular-nums">{counts[severity]}</span>
-        </div>
-      ))}
+    <div className="@container">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border @3xl:grid-cols-5">
+        {SEVERITIES.map((severity) => (
+          <div
+            key={severity}
+            className="flex items-center justify-between gap-2 bg-card px-4 py-3 last:col-span-2 @3xl:last:col-span-1"
+          >
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <SeverityDot severity={severity} />
+              {severityLabel(severity)}
+            </span>
+            <span className="text-lg font-semibold tabular-nums">{counts[severity]}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

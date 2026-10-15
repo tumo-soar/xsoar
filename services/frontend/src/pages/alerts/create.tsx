@@ -49,7 +49,7 @@ export const AlertCreate = () => {
     ...form
   } = useForm<FormValues, any, FormValues>({
     defaultValues: { text: "", labels: "" },
-    refineCoreProps: { resource: "alerts", dataProviderName: "collector", redirect: "list" },
+    refineCoreProps: { resource: "alerts", dataProviderName: "collector", redirect: "show" },
   });
 
   const text = form.watch("text");

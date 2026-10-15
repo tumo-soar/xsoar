@@ -76,7 +76,7 @@ If P01 failed, the page explains that the alert needs a manual check and shows t
 
 ### Upload log
 
-Drop a file or paste text, add labels as `key=value` pairs and send. The form posts to `POST {VITE_COLLECTOR_URL}/alerts` and returns to the queue, where the new alert appears as **Received**. A side panel explains what happens next. The size counter shows the 1 MB limit.
+Drop a file or paste text, add labels as `key=value` pairs and send. The form posts to `POST {VITE_COLLECTOR_URL}/alerts` and opens the new alert, where you can watch AI validation run. The collector returns the alert id before the orchestrator has created the alert, so the alert page retries for up to 15 seconds while the api still answers 404. A side panel explains what happens next. The size counter shows the 1 MB limit.
 
 ### Incidents
 
