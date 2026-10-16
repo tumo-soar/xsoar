@@ -7,7 +7,9 @@ import { Topbar } from "./topbar";
 
 export function AppShell({ children }: PropsWithChildren) {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <SidebarProvider>
