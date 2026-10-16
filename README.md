@@ -1,12 +1,12 @@
 # X SOAR
 
-Log → alert → AI analysis → report with references to log lines. Architecture: [docs/architecture.md](docs/architecture.md).
+Log → alert → AI analysis → report with references to log lines. Architecture: [docs/architecture.md](docs/architecture.md). UI: [docs/ui.md](docs/ui.md).
 
 ## Run
 
 ```sh
 cp .env.example .env
-docker compose -f docker-compose-dev.yml up -d --build
+docker compose -f docker-compose-dev.yml up --build
 ```
 
 OpenRouter key: `OPENROUTER_API_KEY` in `.env`, model: `OPENROUTER_MODEL`. Without a key, an alert ends in `MANUAL_CHECK_REQUIRED`.
@@ -58,7 +58,7 @@ Code in `packages/contracts-py` and `packages/contracts-ts` is generated; do not
 
 ## Structure
 
-Everything that runs as a container lives in `services/`, shared libraries in `packages/`. Items marked `(planned)` do not exist yet. Details: [ADR-002](docs/adr/ADR-002-repository-structure.md).
+Everything that runs as a container lives in `services/`, shared libraries in `packages/`. Items marked `(planned)` do not exist yet. 
 
 ```
 XSOAR/
@@ -71,6 +71,7 @@ XSOAR/
 │
 ├── docs/
 │   ├── architecture.md           # how it works + reference
+│   ├── ui.md                     # SOAR console: screens, live vs preview, design system
 │   ├── adr/                      # architecture decisions, ADR-001…ADR-005
 │   ├── tasks/                    # task descriptions
 │   └── LearningMaterials/
@@ -81,7 +82,7 @@ XSOAR/
 │   └── playbooks/                # input/output of each playbook: p01_ai_validation.*.schema.json
 │
 ├── services/
-│   ├── frontend/                 # React + Vite (refine, shadcn)
+│   ├── frontend/                 # React + Vite (refine, shadcn), SOAR console, see docs/ui.md
 │   ├── api/                      # NestJS, reads alerts from the orchestrator.api_alerts view
 │   │   ├── prisma/schema.prisma
 │   │   └── src/alerts/
@@ -121,4 +122,4 @@ Not done yet (planned): tests (`services/*/tests/`), `Makefile` (`make gen`, `ma
 
 ![Architecture diagram](docs/schema.png)
 
-How it works, message flow, retries, statuses and storage: [docs/architecture.md](docs/architecture.md). Decisions: [docs/adr/](docs/adr/).
+How it works, message flow, retries, statuses and storage: [docs/architecture.md](docs/architecture.md). 
